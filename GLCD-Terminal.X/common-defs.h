@@ -19,28 +19,25 @@
 #define uint16  unsigned short
 #define uint32  unsigned int
 
-#define CMD       0         // For WIFIModule and LCD Module
-#define DATA      1         // For WIFIModule and LCD Module
-#define PSTRMAX   30        // maximum usable string size in user program [0]..[18]
-#define PSTRSIZE  PSTRMAX+2 // need 2 chars extra in array for trailing \0 and the last char in array is the string length
-#define STRLEN    PSTRMAX+1 // pointer to string length element
+#define STRMAX   30        // use fixed length strings to simplify, fix maximum usable size of this string
+#define STRSIZE  STRMAX+2  // but we need 2 chars extra in array for trailing \0 and also a last char in array to put the string length
+#define STRLEN   STRMAX+1  // pointer to string length element
 
 #define STRBUFMAX 250       // maximum string size for serial buffer
 #define BLACK     1         // Define colours
 #define WHITE     0         // Define colours
-#define ERR1      1         // Serial overrun error
 #define CENTRE    1         // LCD text alignment
 #define LEFT      2         // LCD text alignment
 #define RIGHT     3         // LCD text alignment
 
-// keypad keyscan return definitions (displayable ones the same as ASCII)
+// keypad keyscan return definitions (use displayable ASCII ones)
 
-#define K_SCAN    0x01
-#define K_OK      '\r'
-#define K_CANCEL  0x02
-#define K_UP      0x03
-#define K_DN      0x04
-#define K_DEL     0x05
+#define K_SCAN    'S'
+#define K_OK      'O'
+#define K_CANCEL  'C'
+#define K_UP      'U'
+#define K_DN      'D'
+#define K_DEL     'X'
 #define K_DECIMAL '.'
 #define K_0       '0'
 #define K_1       '1'
@@ -53,10 +50,12 @@
 #define K_8       '8'
 #define K_9       '9'
 
-const uint8 ScanCode[] = { K_1,K_7,K_2,K_8,K_3,K_9,K_OK,K_UP, K_4,K_DECIMAL,K_5,K_0,K_6,K_DEL,K_CANCEL,K_DN,K_SCAN }; // map our keyscan to ASCII chars
+const uint8 ScanCode[17] = { K_1, K_7, K_2, K_8, K_3, K_9, K_OK, K_UP, K_4, K_DECIMAL, K_5, K_0, K_6, K_DEL, K_CANCEL, K_DN, K_DEL }; // maps scan 2 code
 
-typedef uint8 tform[16][8];     // type define a screen form 16 x 8 characters
-typedef uint8 pstring[PSTRSIZE]; // type define a fixed length string where elements at the end are space for additional \0 and strings length
+typedef uint8 tform[16][8];        // type define a screen form 16 x 8 characters
+typedef uint8 str30[STRSIZE]; // type define a fixed length string where elements at the end are space for additional \0 and strings length
+
+enum tdevicemode { CMD, DATA, UNKNOWN };
 
 typedef struct // structure for parser, put all variables the users program script can access in here (also makes it easier to remember names with auto-complete)
 {
@@ -70,7 +69,7 @@ typedef struct // structure for parser, put all variables the users program scri
   uint8   pen,canvas,DefBrightness;
   uint16  CursorX,CursorY,ScrXMax,ScrYMax,MaxCursorX,MaxCursorY;
   char    SerialStrBuf[STRBUFMAX];
-  pstring AppTitle, BarcodeStr, RFIDStr, KeypadStr; // fixed length strings
+  str30  AppTitle, BarcodeStr, RFIDStr, KeypadStr; // fixed length strings (memory already assigned upto STRLEN)
 
 } Tprg;
 
@@ -79,6 +78,9 @@ typedef struct
 	uint16 ReturnLine;
 
 } Tstack;
+
+
+
 
 // declare system global vars, not really supposed to define in header but seems more logical here
 

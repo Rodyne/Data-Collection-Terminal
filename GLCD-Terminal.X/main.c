@@ -12,33 +12,18 @@
 
 int main()
 {
-
-  uint32 timeout;
-
 	InitTerminal();
 
 	DoLogo();
 
-	InitBarcodeScan();
-
-	LCDWriteStrAt(2,12,"Connecting..");
-	LCDWriteStrAt(2,14,"            ");
+	WiFiInit(1);
 
 	if(!WIFI_LINK()) SetupWIFI();
 
-	CLS();
-	
 	while(1)
 	{
-		while(SerialAvailable(WIFI_UART))
-		{
-			LCDWriteChar(SerialRead(WIFI_UART));
-		}
-		if(ReadBarcode())
-		{
-			LCDWriteChar(SerialRead(WIFI_UART));
-		}
+	  InitBarcodeScan();
+  	run();
 	}
-
 }
 

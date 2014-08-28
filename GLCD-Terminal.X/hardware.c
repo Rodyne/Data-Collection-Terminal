@@ -15,31 +15,49 @@
 #include "common-defs.h" // Font tables etc
 #include "fonts.c" // Font table
 
-#define _SUPPRESS_PLIB_WARNING // Get rid of annoyances
+#define _SUPPRESS_PLIB_WARNING // Get rid of MPLABX plib depreciation harmony annoyances (WTF Microchip!)
 #include <plib.h>    // microchip pic32 peripheral libraries
+
+#define DEBUG_WIFI // show chars from wifi serial
+#define CLK_8 // Rev 3 uses 3.57Mhz Clock and slightly different pinIO
 
 // PIC32 Config/Fuse settings
 
-// Using 8Mhz XTAL
-#pragma config POSCMOD = XT     // Primary Oscillator Configuration (XT = 3-10Mhz XTAL, HS >10Mhz XTAL)
-#pragma config FNOSC = PRIPLL   // Oscillator Selection = Primary Osc (tweek for lowest that supports 115200 baud 16Mhz about OK
-#pragma config FPLLIDIV = DIV_2 // must be div 2 to get in pll range for input
-#pragma config FPLLMUL = MUL_20
-#pragma config FPLLODIV = DIV_4 // 20mhz!
+#ifdef CLK_7372  // uses 7.3728Mhz (No PLL) will give 115200 baud (0% error)
 
-#pragma config IESO = OFF      // Internal/External Switch Over Disabled
-#pragma config FPBDIV = DIV_1  // Peripheral Clock Divisor (Pb_Clk is Sys_Clk/1)
-#pragma config OSCIOFNC = OFF  // CLKO Output Signal Active on the OSCO Pin Disabled
-#pragma config FCKSM = CSDCMD  // Clock Switching and Monitor Selection Disabled
-#pragma config FSOSCEN = OFF   // Secondary Oscillator Disabled not required and osc2 pins are needed
-#pragma config FWDTEN  = OFF   // Watchdog Timer off not required
+ // #define SYS_FREQ              3579545ul        // 3.57MHZ still gives plenty of horsepower for this application and reduces pwr req to lowest
+  #define SYS_FREQ              7372000ul        // 7.372MHZ
+  #pragma config								FNOSC = PRI      // Oscillator Selection = Primary Osc (No PLL we just use the osc as is!)
+  #define TIMER1DIVISOR					T1_PS_1_256			 // (3579545/256/7) timer 1 divisor = 1997 interupts per second (for buzzer/backlight)
+  #define TIMER1PERIOD					7								 // (3579545/256/7) timer 1 period = 1997 interupts per second
+  #define uSDELAYMULTIPLIER     2					  		 // Need to set this to ensure microsecond delay routine is correct
 
-#define SYS_FREQ              20000000ul       // 8Mhz NOT 80Mhz! plenty of horsepower for this application and reduces pwr req
-#define GetSystemClock()      (SYS_FREQ)       // Used instead of SYS_FREQ in some modules.
-#define GetInstructionClock() GetSystemClock() // GetSystemClock()/1 for PIC32.  Might need changing if using Doze modes.
-#define GetPeripheralClock()  GetSystemClock() // GetSystemClock()/1 for PIC32.  Divisor may be different if using a PIC32 sinc
-#define TIMER1PERIOD					8								 // Need to set this when changing clock to get approx 2000 interupts per second
-#define uSDELAYMULTIPLIER     10							 // Need to set this to ensure microsecond delay routine is correct
+#endif
+
+#ifdef CLK_8 // REV1 and 2 used 8Mhz XTAL and PLL to 20Mhz to allow baud rate generator to get to 115200 baud (not achievable without PLL)
+
+  #define SYS_FREQ              20000000ul       // 20Mhz (using 8Mhz XTAL)
+  #pragma config								FNOSC = PRIPLL   // Oscillator Selection = Primary Osc (tweek for lowest supporting 115200 baud)
+  #pragma config								FPLLIDIV = DIV_2 // must be div 2 to get in pll range for input = 4
+  #pragma config								FPLLMUL = MUL_20 // 
+  #pragma config								FPLLODIV = DIV_4 //
+  #define TIMER1DIVISOR					T1_PS_1_256			 // (20000/256/35) timer 1 divisor = 2000 interupts per second (for buzzer/backlight)
+  #define TIMER1PERIOD					35							 // (20000/256/35) timer 1 period = 2000 interupts per second
+  #define uSDELAYMULTIPLIER     10							 // Need to set this to ensure microsecond delay routine is correct
+
+#endif
+
+#pragma config									POSCMOD = XT     // Primary Oscillator Configuration (XT = 3-10Mhz XTAL, HS >10Mhz XTAL)
+#pragma config									IESO = OFF       // Internal/External Switch Over Disabled
+#pragma config									FPBDIV = DIV_1   // Peripheral Clock Divisor (Pb_Clk is Sys_Clk/1)
+#pragma config									OSCIOFNC = OFF   // CLKO Output Signal Active on the OSCO Pin Disabled
+#pragma config									FCKSM = CSDCMD   // Clock Switching and Monitor Selection Disabled
+#pragma config									FSOSCEN = OFF    // Secondary Oscillator Disabled not required and osc2 pins are needed
+#pragma config									FWDTEN  = OFF    // Watchdog Timer off not required
+
+#define GetSystemClock()				(SYS_FREQ)       // Used instead of SYS_FREQ in some modules.
+#define GetInstructionClock()		GetSystemClock() // GetSystemClock()/1 for PIC32.  Might need changing if using Doze modes.
+#define GetPeripheralClock()		GetSystemClock() // GetSystemClock()/1 for PIC32.  Divisor may be different if using a PIC32 sinc
 
 
 // Macro Pin definitions for ALL PIC32 pins. The pin defs and pin macros MUST Match
@@ -67,9 +85,9 @@
 #define WIFI_LINK()           !PORTBbits.RB3          // IN  (active low)
 #define UNUSED_PIN(state)		  LATBbits.LATB4 = state  // OUT (unused)
 #define PWR_HOLD(state)				LATBbits.LATB5 = state  // OUT (set high to keep CPU powered on, drop to 'true' power off system fully)
-#define KEY_SCAN              !PORTBbits.RB6          // IN
-#define KEYSTROBE0            !PORTBbits.RB7          // IN
-#define KEYSTROBE1            !PORTBbits.RB8          // IN
+#define KEY_SCAN              !PORTBbits.RB6          // IN  (active low)
+#define KEYSTROBE0            !PORTBbits.RB7          // IN  (active low)
+#define KEYSTROBE1            !PORTBbits.RB8          // IN  (active low)
 #define K0(state)             LATBbits.LATB9  = state // OUT
 #define K5(state)             LATBbits.LATB10 = state // OUT
 #define K6(state)             LATBbits.LATB11 = state // OUT
@@ -82,8 +100,12 @@
 #define LCD_RESET(state)      LATCbits.LATC1 = state  // OUT (Active Low - reset for LCD)
 #define SET_PPS_WIFI_TX       PPSOutput(4,RPC2,U2TX)  // OUT (UART 2 TRANSMIT OUT)
 #define SET_PPS_BARCODE_RX    PPSInput(3,U1RX,RPC3)   // IN  (UART 1 RECEIVE IN. Note If using SE-1223 *must* be 5V tollerant or use level converter)
-#define BARCODE_DECODE()      PORTCbits.RC4           // IN  (Requires weak pull up)
-#define SET_PPS_BARCODE_TX    PPSOutput(1,RPC5,U1TX)  // OUT
+#ifdef REVISION_3
+  #define BARCODE_DECODE()    PORTCbits.RC4           // IN  (Requires weak pull up)
+#else
+  #define PWR_WIFI(state)     PORTCbits.RC4 = state   // OUT
+#endif
+#define SET_PPS_BARCODE_TX    PPSOutput(1,RPC5,U1TX)  // OUT (Note we dont actually have a need to write to the barcode module yet maybe never!)
 #define K1(state)             LATCbits.LATC6  = state // OUT
 #define K2(state)             LATCbits.LATC7  = state // OUT
 #define K3(state)             LATCbits.LATC8  = state // OUT
@@ -96,33 +118,38 @@
 
 // defs only app to this specific hardware
 
-#define KEYTHRESHOLD          10      // each few mS each key is checked, if pressed it increments its counter, if not it zeroises it, if counter>threshold we say is pressed (sort of a debounce)
+#define KEYTHRESHOLD          2     // 15 times a second if a key pressed it increments its counter, if not it decrements it, if counter>threshold we say is pressed (no debounce)
+#define KEYPRESSMAX           40    // this is the number the above counter ceilings at
 #define LCD_PG                0xb0  // LCD Pg you can add offset to it
 #define NORMAL_CONTRAST       0x14
 #define SER1BUFLEN            32    // size of serial buffer COM1 (barcode)
 #define SER2BUFLEN            1024  // size of serial buffer COM2 (wifi)
 #define KEYBUFLEN							8     // size of keypad buffer
-#define LCD_ON								0xAF
-#define LCD_OFF								0xAE
-#define LCD_NORMAL						0xA6
-#define LCD_REVERSE						0xA7
-#define WIFITIMEOUTMS					10000 // 5*2000 = 5 Seconds
+#define LCD_ON								0xAF  // LCD Command to turn on LCD
+#define LCD_OFF								0xAE  // LCD Command to turn off LCD
+#define LCD_NORMAL						0xA6  // LCD Command to normalise LCD Display (black on white)
+#define LCD_REVERSE						0xA7  // LCD Command to invert LCD display (white on black)
 
-volatile uint32  counter1;
+#define WIFITIMEOUTMS					1250  // 5*250 = 5 Seconds
+
+volatile uint8   KeyState[17]; // low level key buffer hold no of pulses counted while key pressed and count reset on release (anti-bounce etc)
+volatile uint32  counter1;     // general purpose counter (try and only read it - no way of really protecting it as read only in C)
 volatile uint8   BacklightTimeout, Brightness, triggered;
+volatile uint8   KeyNo=0; // key scan processing ticker/counter
 volatile uint16  BuzzerTimeout, UserActivityTimeout, WifiActivityTimeout, BarcodeActivityTimeout; // counts up 10 times a second resets if key pressed
 volatile uint8   KeyBuf[KEYBUFLEN]; // high level buffer, holds processed keys read by readkey()
 volatile uint16  RxData1In, RxData1Out, RxData2In, RxData2Out, KeyBufInPtr, KeyBufOutPtr; // indexes for char read in from uART and char read out by user
 volatile uint8   RxBuffer1[SER1BUFLEN], RxBuffer2[SER2BUFLEN]; // interrupt receive buffers wi-fi data buffer should be bigger than barcode as it will be used more
-uint8            WIFICMDMode;
 tform            CurScr,SaveScr;
+enum tdevicemode WIFIMode; // DATA or CMD
 
 void DelayMicroseconds(uint32 uS) // Blocking wait of 1uS (Interrupts will still work ok)
 {
-  uint32 ExitCount = ReadCoreTimer() + (10*uS); // set future time
+  uint32 ExitCount = ReadCoreTimer() + (uSDELAYMULTIPLIER*uS); // set future time
 
-	if(ExitCount<ReadCoreTimer()) // Catch timer overflow condition, means we cannot use the timer for this so approximate the old fashioned way less accurate
+	if(ExitCount<ReadCoreTimer()) // Catch timer overflow condition, we cannot use the timer if about to overflow (once every 128 seconds)
 	{
+		// do timimg the old fashioned way, less accurate but only used in a blue moon
 		for(ExitCount=0; ExitCount<uSDELAYMULTIPLIER*uS; ExitCount++)
 			asm("NOP");
 	}
@@ -361,32 +388,6 @@ void LCDInit() // as reset pin is common with wifi and barcode then we assume ph
 	LCDMode(LCD_ON);
 }
 
-void DoLogo()
-{
-  uint8 i;
-	CLS();
-	LCDSetContrast(0);
-	Brightness=10;
-	Pen(WHITE);
-	LCDWriteStrAt(3,2,"          ");
-	LCDWriteStrAt(3,3,"  ROVING  ");
-	LCDWriteStrAt(3,5," DYNAMICS ");
-	Pen(BLACK);
-	LCDWriteStrAt(3,9,"rodyne.com");
-	LCDWriteStrAt(2,12,"OPEN  SOURCE");
-	LCDWriteStrAt(2,14,"  HARDWARE");
-	for(i=0; i<28; i++)
-	{
-		LCDSetContrast(i);
-		DelayMs(40);
-	}
-	for(i=28; i>NORMAL_CONTRAST; i--)
-	{
-		LCDSetContrast(i);
-		DelayMs(80);
-	}
-}
-
 
 /*
  *  SERIAL UART ROUTINES
@@ -405,8 +406,10 @@ void SerialWriteStr(UART_MODULE id, char *str) // use above to send a string
   {
     SerialWrite(id, *str);
     str++;
+		DelayMicroseconds(20); // check if required!
   }
 }
+
 
 uint8 SerialAvailable(UART_MODULE id)
 {
@@ -414,32 +417,19 @@ uint8 SerialAvailable(UART_MODULE id)
   if(id==UART2) return RxData2In-RxData2Out;
 }
 
-void PurgeSerial(UART_MODULE id)
-{
-  asm("di");
-  if(id==UART1)
-  {
-    RxData1Out=0;
-    RxData1In=0;
-  }
-  if(id==UART2)
-  {
-    RxData2Out=0;
-    RxData2In=0;
-  }
-  asm("ei");
-}
-
-uint8 SerialRead(UART_MODULE id) // Reads buffer. No checks here, you must use SerialDataAvailable before calling this...
+uint8 SerialRead(UART_MODULE id) // Reads buffer. No checks here, you must use SerialDataAvailable before calling this or we return 0x00
 {
   uint8 c;
-
   if(id==UART1)
   {
     if(RxData1Out<RxData1In) // check we actually have data first
     {
       c = RxBuffer1[RxData1Out++];
-      if(RxData1Out==RxData1In) PurgeSerial(UART1); // once up to date reset the buffer indexes back to the begining
+      if(RxData1Out==RxData1In)// once up to date reset the buffer indexes back to the begining
+			{
+        RxData1Out=0;
+        RxData1In=0;
+			}
       return c;
     }
     else
@@ -450,47 +440,62 @@ uint8 SerialRead(UART_MODULE id) // Reads buffer. No checks here, you must use S
     if(RxData2Out<RxData2In) // check we actually have data first (if rxDataIn=15 we have overrun but we ignore this)
     {
       c = RxBuffer2[RxData2Out++];
-      if(RxData2Out==RxData2In)  PurgeSerial(UART2);// once up to date reset the buffer indexes back to the begining
+      if(RxData2Out==RxData2In)// once up to date reset the buffer indexes back to the begining
+			{
+        RxData2Out=0;
+        RxData2In=0;
+			}
       return c;
     }
     else
       return 0; // no data WTF, should have used serialDataAvaiable first!
   }
-
 }
 
-uint8 SerialReadStr(UART_MODULE id,uint16 TimeoutMs) // returns number of char in string, resulr (string) stored in StrBuf
+void PurgeSerial(UART_MODULE id) // discard remaining serial chars and clear errors and buffers
 {
-  uint16 i=TimeoutMs;
-  char ch=0;
-  uint8 CharCount=0;
-
-  while(i<TimeoutMs && ch!='\n')
+	uint8 dummychar;
+	DelayMs(10);
+	while(SerialAvailable(id)) // wait for all current chars being sent by device to finish
+	{
+		dummychar=SerialRead(id); // read/discard
+  	DelayMs(5);
+	}
+	// clear errors and buffers
+  asm("di");
+  if(id==UART1)
   {
-    if(SerialAvailable(id))
-    {
-      ch=SerialRead(id);
-      if(ch!='\n') prg.SerialStrBuf[CharCount]=ch;
-			if(CharCount<STRBUFMAX-1) CharCount++; else prg.ErrorCode=ERR1;
-    }
+		U1STAbits.OERR = 0;
+		U1STAbits.FERR = 0;
+    RxData1Out=0;
+    RxData1In=0;
   }
-  prg.SerialStrBuf[CharCount]= 0x00;
-  return CharCount;
+  if(id==UART2)
+  {
+		U2STAbits.OERR = 0;
+		U2STAbits.FERR = 0;
+    RxData2Out=0;
+    RxData2In=0;
+  }
+  asm("ei");
 }
 
-uint8 LocateStrInSerialData(uint8 UARTID, char *match, uint16 TimeoutMs) // will timeout if no match
+uint8 SerialDataMatches(uint8 UARTID, char *matching, uint16 TimeoutMs) // will fail if serial data does not match string in serial stream before timeout occurs
 {
-  uint8 i=0;
-  while(--TimeoutMs) // keep in loop until timeout counter gets to zero
+	char c;
+	char *str = matching;
+  while(TimeoutMs--) // keep in loop until timeout or match/fail
   {
-    DelayMs(1);
     if(SerialAvailable(UARTID))
-    {
-      if(SerialRead(UARTID)!=match[i++]) i=0; // keep incrementing i while incoming serial char matches next posn in string, reset if char match fails
+		{
+			c=SerialRead(UARTID);
+// 		  LCDWriteChar(c);
+			if(c == *str) str++; else str=matching; // go to next char if match or reset to begining if match fails
+			if(*str == '\0') return 1; // got to end of match string so all chars matched
     }
-    if(match[i]==0 && i>0) return TRUE;  // goto to end of string so must have matched
+    DelayMs(1);
   }
-  return FALSE;
+	return 0; // timeout before match
 }
 
 /*
@@ -499,63 +504,72 @@ uint8 LocateStrInSerialData(uint8 UARTID, char *match, uint16 TimeoutMs) // will
  */
 
 
-uint8 WriteWIFI(uint8 mode, char *param1, char *param2) // return 0 if ok
+uint8 WriteWIFICMD(char *param1, char *param2, uint8 IsReset) // return 1 if ok
 {
-  uint16 timeout=900; // 900mS Max for getting to command mode
-	if(mode==CMD)
+	uint8  retry=3;
+	while(WIFIMode!=CMD && retry--) // If not in command mode then enter command mode (try 3 times before failing just in case!)
 	{
-		if(WIFICMDMode!=1) // If not in command mode then enter command mode (assume it works, I guess user can reset if not)
+		// as per wifi232-s data sheet write out +++ wait for an 'a' and then send an 'a' in response
+  	PurgeSerial(WIFI_UART); // remove any crud before we start
+		SerialWrite(WIFI_UART,'+'); // write the first '+' to test we are not already in CMD mode
+		if(SerialDataMatches(WIFI_UART,"+",100)) // wait 100mS for an echo, if we recv the + back we must already be in cmd mode (assuming the host doesnt echo!)
 		{
-			// as per data sheet
-			DelayMs(20);
-			SerialWriteStr(WIFI_UART,"+++");
-			while(timeout-- && !SerialAvailable(WIFI_UART) )
-				DelayMicroseconds(1000); // wait here for response/timeout
-			if( SerialAvailable(WIFI_UART))
-			{
-				if(SerialRead(WIFI_UART)=='a')
-				{
-					SerialWrite(WIFI_UART,'a');
-					WIFICMDMode=1;
-				}
-			}
+			// already in cmd mode so terminate it (the '+' will give a syntax error but we know that and can safely ignore it)
+	    SerialWrite(WIFI_UART,'\r');
+			DelayMs(50); // while the error comes in
+			PurgeSerial(WIFI_UART);
+			WIFIMode=CMD;
 		}
-		if(WIFICMDMode) // ok we are now in command mode
+		else // not in cmd mode yet so write the other two +  - to make 3 in total (+++)
 		{
-			SerialWriteStr(WIFI_UART,param1); // write out first parameter
-			if(param2!="") // if second parameter then add a space and write out second parameter
-			{
-				SerialWriteStr(WIFI_UART," ");
-				SerialWriteStr(WIFI_UART,param2);
-			}
-			SerialWriteStr(WIFI_UART,"\r");
-			if(param1=="AT+Z") WIFICMDMode=0;
-			if(timeout) return 0; else return 1;
+		  SerialWriteStr(WIFI_UART,"++");
+  		if(SerialDataMatches(WIFI_UART,"a",100)) // wait for the 'a' response
+  		{
+  	    SerialWrite(WIFI_UART,'a'); // write the 'a'
+    		if(SerialDataMatches(WIFI_UART,"+ok",100)) // wait for the +ok message to confirm
+    		  WIFIMode=CMD;
+   		}
 		}
-		else
-			return 0;
 	}
-	if(mode==DATA) // sending data to host service
+	if(WIFIMode==CMD) // assuming the above worked and we are now in CMD mode then execute the actual cmd
 	{
-		if(WIFICMDMode) // if we are in cmd mode then get back into transparant mode
+		PurgeSerial(WIFI_UART); // just to be safe eliminate any additional chars that may have been left over from above (50mS delay)
+		SerialWriteStr(WIFI_UART,param1); // write out first parameter
+	  if(param2!="") SerialWriteStr(WIFI_UART,param2);  // if second parameter then write out second parameter
+		SerialWriteStr(WIFI_UART,"\r"); // terminate cmd with CR
+		if(IsReset) // doesnt echo but resets terminal and should go back to data mode on reset
 		{
-			SerialWriteStr(WIFI_UART,"AT+ENTM");
-			DelayMs(20);
+			WIFIMode=DATA;
+			return 1;
 		}
-		SerialWriteStr(WIFI_UART,param1); // write first parameter
-		if(param2!="") SerialWriteStr(WIFI_UART,param2); // if there is a second parameter write this immediately following first (no space like on a cmd)
-		return 1; // return 1 to say has been sent (not sure if received tho!)
+	  return SerialDataMatches(WIFI_UART,"+ok",1000); // remember it will also echo the cmd before
 	}
+	return 0; // if we diddnt get in cmd mode then fail by returning 0
 }
 
-uint8 WiFiInit(uint8 wait) // 100mS
+uint8 WriteWIFIDATA(char *param1, char *param2) // return 1 
+{
+  if(WIFIMode!=DATA) // if we are in cmd mode then get back into transparant mode
+		if(WriteWIFICMD("AT+ENTM","",0))
+			WIFIMode=DATA;
+
+	if(WIFIMode==DATA)
+	{
+	  SerialWriteStr(WIFI_UART,param1); // write first parameter
+	  if(param2!="") SerialWriteStr(WIFI_UART,param2); // if there is a second parameter write this immediately following first (no space like on a cmd)
+	  return 1; // return 1 to say has been sent (not sure if received tho!)
+	}
+	return 0; // error
+}
+
+uint8 WiFiInit(uint8 wait)
 {
 	uint16 wtimeout;
-	WIFICMDMode=DATA; // on reset the serial modules default to throughput mode (DATA)
   WIFI_RESET(0);
-  PurgeSerial(WIFI_UART);
-  DelayMs(20);
+	DelayMs(50);
   WIFI_RESET(1);
+  PurgeSerial(WIFI_UART);
+	WIFIMode=UNKNOWN;
 	if(wait) wtimeout=counter1+200; else wtimeout=counter1+WIFITIMEOUTMS;
   while(!WIFI_LINK() && counter1<wtimeout); // wait for Wifi to connect
 	return WIFI_LINK(); // return if connected or not
@@ -607,9 +621,9 @@ void InitBarcodeScan() // call this first to wake up and initiate scan
   BARCODE_RESET(1);
   DelayMs(100);
   PurgeSerial(BARCODE_UART);
-  SerialWriteStr(BARCODE_UART,"{MC11WT0,1}\0");
-  BARCODE_TRIG(0); // initiate scan on MT700 (should wake up and led go on to read)
+  BARCODE_TRIG(0); // initiate scan on MT700 (should wake up and led go on to read) as its a seperate CPU it can exit now and work in parallel
 	triggered=1;
+	// note we do not actually ever need to write to the barcode scanner in this version
 }
 
 uint8 ReadBarcode() // Read in barcode string from above scan (up to max input size)
@@ -619,7 +633,7 @@ uint8 ReadBarcode() // Read in barcode string from above scan (up to max input s
   prg.BarcodeStr[0]=0x00; // set length to 0
 	if(!triggered) InitBarcodeScan();
   while(counter1<endtime && !SerialAvailable(BARCODE_UART)); // while we have not timed out and not decoded the barcode hang around here
-	while(BarcodeLen<PSTRMAX && counter1<endtime)
+	while(BarcodeLen<STRMAX && counter1<endtime)
   {
 		beep(80);
     if(SerialAvailable(BARCODE_UART))
@@ -644,8 +658,10 @@ uint8 ReadBarcode() // Read in barcode string from above scan (up to max input s
 
 void PurgeKeyBuf() // reset buffer (called automatically when all keys read can also call manually to purge key buffer if required)
 {
+	asm("di");
   KeyBufInPtr=0;
 	KeyBufOutPtr=0;
+	asm("ei");
 }
 
 uint8 KeyPressed() // return true if a key is waiting in buffer
@@ -656,14 +672,10 @@ uint8 KeyPressed() // return true if a key is waiting in buffer
 uint8 ReadKey() // return key scan code from keybuffer and inc ptr to next key if there is one
 {
 	uint8 k;
-  if(!KeyPressed())
-		return 0; // should have checked!
-	else
-	{
-	  k = KeyBuf[KeyBufOutPtr++];
-		if(KeyBufInPtr==KeyBufOutPtr) PurgeKeyBuf();
-		return k;
-	}
+	if(!KeyPressed())	return 0; // should have checked!
+	k = KeyBuf[KeyBufOutPtr++];
+	if(KeyBufInPtr==KeyBufOutPtr) PurgeKeyBuf();
+	return k;
 }
 
 
@@ -686,11 +698,11 @@ void ResetDefaults()
 	BarcodeActivityTimeout=0;				// determine when to put barcode module to sleep (or power off)
 	prg.InputTimeoutMs=30*2000;			// 30 seconds
 	prg.DimTimeoutMs=10*2000;				// 10 seconds
-	prg.OffTimeoutMs=60*60*2000;		// 60 minutes of no activity shuts off system
+	prg.OffTimeoutMs=20*60*2000;		// 20 minutes of no activity shuts off system
 	prg.BarcodeTimeout=5*2000;			// 5 seconds
 	prg.RFIDTimeout=5*2000;					// 5 seconds
 	prg.BarcodePwrTimeout=30*2000;	// 30 seconds
-	prg.WIFIPwrTimeout=30*2000;			// 30 seconds
+	prg.WIFIPwrTimeout=30*2000;			// 60 seconds
 }
 
 void InitTerminal(void) // Initialise PIC32 and terminal io pins
@@ -701,8 +713,6 @@ void InitTerminal(void) // Initialise PIC32 and terminal io pins
   SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
   CVREFClose();//disables the CVREF module.
 
-  AD1CHS = 0;
-
   // Init IO Pins using macros - why? - keep pin defs together in header for easier changing rather than going to top of program and then back here all the time!
 	CFG_PORT_A_IN
 	CFG_PORT_A_OUT
@@ -711,10 +721,35 @@ void InitTerminal(void) // Initialise PIC32 and terminal io pins
 	CFG_PORT_C_IN
 	CFG_PORT_C_OUT
 
-  // Set RFID_MOD pin (RA10) to open drain
-  ODCA = 0x40;
+	// turn off PIC32 modules not used to save power (a few miliamps at most but it all helps)
+  AD1CHS = 0; // ADC Off
+	PMD1bits.AD1MD = 1;  // ADC Pwr off
+	PMD1bits.CTMUMD = 1; // CTMU Off
+	PMD1bits.CVRMD = 1;  // CVR Off
+	PMD2bits.CMP1MD = 1; // Comparator 1 off
+	PMD2bits.CMP2MD = 1; // Comparator 2 off
+	PMD2bits.CMP3MD = 1; // Comparator 3 off
+	PMD3bits.IC1MD = 1;  // Input compare 1 off
+	PMD3bits.IC2MD = 1;  // Input compare 2 off
+	PMD3bits.IC3MD = 1;  // Input compare 3 off
+	PMD3bits.IC4MD = 1;  // Input compare 4 off
+	PMD3bits.IC5MD = 1;  // Input compare 5 off
+	PMD3bits.OC1MD = 1;  // output compare 1 off
+	PMD3bits.OC2MD = 1;  // output compare 2 off
+	PMD3bits.OC3MD = 1;  // output compare 3 off
+	PMD3bits.OC4MD = 1;  // output compare 4 off
+	PMD3bits.OC5MD = 1;  // output compare 5 off
+	PMD4bits.T2MD = 1;   // timer2 off
+	PMD4bits.T3MD = 1;   // timer3 off
+	PMD4bits.T4MD = 1;   // timer4 off
+	PMD4bits.T5MD = 1;   // timer5 off
+	PMD5bits.I2C1MD = 1; // I2C Off
+	PMD5bits.I2C2MD = 1; // I2C Off
+	PMD5bits.SPI2MD = 1; // SPI 2 off
+	PMD6bits.PMPMD = 1;  // Parallel Master Port off
+	PMD6bits.REFOMD = 1;  // ref clk out off
 
-  // set default states
+	// set default states
   PWR_HOLD(1); // hold power on system after keypress (must do this first thing to keep power on!)
   BUZZER(0);
   BACKLIGHT(0);
@@ -722,6 +757,8 @@ void InitTerminal(void) // Initialise PIC32 and terminal io pins
   BARCODE_TRIG(1);
   RFID_MOD(0);
   K0(1); K1(1); K2(1); K3(1); K4(1); K5(1); K6(1); K7(1);
+	for(i=0; i<17; i++)
+		KeyState[i]=0;
 
   PPSUnLock; // Unlock PPS to allow UART AND SPI PIN Mapping
   SET_PPS_SDO;
@@ -731,16 +768,14 @@ void InitTerminal(void) // Initialise PIC32 and terminal io pins
   SET_PPS_BARCODE_RX;
   PPSLock; // lock PPS
 
-  // SPI 8-bit, Master Mode, clk idle high, Baud =  8/4 = 2MHz
+  // SPI 8-bit, Master Mode, clk idle high, Baud =  pOSC/4
   SPI1CON = 0x00;
   i = SPI1BUF;
   SPI1BRG = 0x0004;
   SPI1STATbits.SPIROV = 0;
-  SPI1CON = 0x00008260; // was 8260
+  SPI1CON = 0x00008260;
 
-	ResetDefaults();
-
-	// set default timeouts
+	ResetDefaults(); 	// set default timeouts and things that can be altered by user program
 
   // Configure UART1
   UARTConfigure(BARCODE_UART, UART_ENABLE_PINS_TX_RX_ONLY);
@@ -763,7 +798,7 @@ void InitTerminal(void) // Initialise PIC32 and terminal io pins
   INTEnable(INT_SOURCE_UART_RX(WIFI_UART),  INT_ENABLED);
 
   // Configure timer 1 backlight/buzzer
-  OpenTimer1(T1_ON | T1_SOURCE_INT | T1_PS_1_256, TIMER1PERIOD); // We want timer interrupt approx 2000 times a second (for buzzer/backlight)
+  OpenTimer1(T1_ON | T1_SOURCE_INT | TIMER1DIVISOR, TIMER1PERIOD); // We want timer interrupt approx 2000 times a second (for buzzer/backlight)
   ConfigIntTimer1(T1_INT_ON | T1_INT_PRIOR_4); // highest priority
 
   // Configure for Multi-Vectored Interrupts //
@@ -777,7 +812,7 @@ void InitTerminal(void) // Initialise PIC32 and terminal io pins
 
 }
 
-// INTERRUPT HANDLERS ....
+// INTERRUPT HANDLERS ....  (remember any interrupts will wake CPU from idle/sleep!)
 
 void __ISR(_UART1_VECTOR, IPL2) IntUart1Handler(void) // UART 1 RX/TX Interrupt Handlers
 {
@@ -801,67 +836,93 @@ void __ISR(_UART_2_VECTOR, IPL3) IntUart2Handler(void) // UART 2 RX/TX Interrupt
   }
 } // end UART interrupt handler
 
-void __ISR( _TIMER_1_VECTOR, IPL4) _T1Interrupt( void) // interrput code for the timer 1 (2000 x a second)
-{
-	// declare all local variables static so they are persistant rather than temporary
-  static uint8 i; // general purpose counter
-	static uint8 KeyNo=0; // key scan counter
-  static char  KeyState[17]; // low level key buffer hold no of pulses counted while key pressed and count reset on release (anti-bounce etc)
 
-  counter1++;
+void ProcessKeyStrobe(uint8 StrobeLine) // process key scan lines (function must be very small and fast, no loops/procs, as its in a time critical interrupt!)
+{
+	if(StrobeLine) // check strobe line if active then register keypress (actual key depends on which of the 8 scan lines (KeyNo val) is set)
+	{
+		// key pressed
+		if(KeyState[KeyNo]<KEYPRESSMAX)	KeyState[KeyNo]++; // chk strobe line while key is pressed increment up to MAX
+		if(KeyNo==14 && KeyState[KeyNo]==KEYPRESSMAX) PWR_HOLD(0); // If cancel key held for MAX time then power off unit
+		return;
+	}
+	// if we get here key is not pressed
+	if(KeyState[KeyNo]) // key was pressed but is now released - and we do the processing on the release of the key!
+	{
+		if(KeyState[KeyNo]>KEYTHRESHOLD) // if key press count goes above threshold we consider the key as "really pressed" (ie no debounce)
+		{
+			KeyState[KeyNo]=0;  // reset key counter on process
+			UserActivityTimeout=0; // reset this to show user is still alive and pressing keys (we dont want to pwr off if they are using it!)
+			Brightness=prg.DefBrightness; // light up backlight if pressed a key!
+			if(KeyBufInPtr<KEYBUFLEN)
+			{
+				// keep adding keypresses to the key buffer until full
+				KeyBuf[KeyBufInPtr++]=ScanCode[KeyNo];
+				BuzzerTimeout=20; // key click (if thats possible!)
+			}
+			if(KeyNo==14 && KeyState[KeyNo]==KEYPRESSMAX) PWR_HOLD(0);  // If cancel key held for the KEYPRESSMAX time (at least 2 seconds) then power off unit
+		}
+		else // very important this else as we have already set keystate[keyno] to zero above so one more dec would set to 255!
+  		KeyState[KeyNo]--; // if key is released before it gets to threshold then dec the counter back to 0 (eliminate noise/bounce)
+	}
+}
+
+void __ISR( _TIMER_1_VECTOR, IPL4) _T1Interrupt( void) // interrput code for the timer 1 (2000 x a second - clock is 3.5mhz so dont hog CPU!)
+{
+	static uint8 prescaler; // need this to slow 2000 times a second to (2000/10) 200 times/sec (persistant/local var)
 
   if(BuzzerTimeout>0) BuzzerTimeout--;
   BUZZER(BuzzerTimeout && BuzzerTimeout%2); // sound @ 2Khz while active
-  if(++BacklightTimeout>10) BacklightTimeout=0; // Set PWM on TFT Backlight from 10% to 100% duty depending upon brightness
+  if(++BacklightTimeout>10) BacklightTimeout=0; // Set PWM on TFT Backlight from 0% to 100% duty in 10% steps depending upon brightness
   BACKLIGHT(BacklightTimeout<Brightness);
-  
-  // Check for keypresses we have 17 keys each keypress registered increases the counter for that key in an array KeyState[]
-  // once we get past the threshold we call the key pressed, any release during that time will reset the count
-  // once key pressed we add it to the end of the keybuf (up to 8 key presses max)
-  // note KeyNo overflows 255->0 so we only sample keypress every 30mS or so
 
-	// use KeyNo as a stepper processing one key each change so we dont do too much during the interrupt
-	if(KeyNo<16 && KeyNo%2==0)
+  counter1++; // 32 bit overflows in several years so basically dont worry about overflowing!
+	
+	if(prescaler++>8) // divide the 2000 times a second by 8 to a more manageble 250 a second (approx 1 every 5mS) for keypad processing
 	{
-		// Set scan lines low in sequence
-		K0(KeyNo!=0);
-		K1(KeyNo!=2);
-		K2(KeyNo!=4);
-		K3(KeyNo!=6);
-		K4(KeyNo!=8);
-		K5(KeyNo!=10);
-		K6(KeyNo!=12);
-		K7(KeyNo!=14);
-    if(KEYSTROBE0) KeyState[KeyNo]++; else KeyState[KeyNo]=0; // strob0 press
-    if(KEYSTROBE1) KeyState[KeyNo+1]++; else KeyState[KeyNo+1]=0; // strob1 press
-	}
-	if(KeyNo==16) // check scan key seperately
-  {
-  	if(KEY_SCAN) KeyState[16]++; else KeyState[16]=0;
-	}
-	if(KeyNo>=20 && KeyNo<37) // process keystate information into actual keypresses
-  {
-		if(KeyState[KeyNo-20]>KEYTHRESHOLD) // if key press count goes above threshold we consider the key as "really pressed" (ie no debounce)
+		prescaler=0;
+
+		// process keypad
+		// Check for keypresses we have 17 keys each keypress increases the counter for that key in an array KeyState[] a release decreases it.
+		// once we get past the threshold we call the key pressed you can check how long held (if count reaches threshold then about 1.5 seconds!)
+		// once key considered pressed we add it to the end of the keybuf (up to 8 key presses max)
+		// note KeyNo goess from 0 to 16 so we effectively sample keypress at (250/17 =) 15 times a second
+		// use KeyNo as a ticker, processing two keys each tick/pass this way we dont do too much (certainly dont use any loops during the interrupt!)
+
+		// Set scan lines low in sequence (active low as the strobe lines are pulled high)
+		K0(KeyNo!=0); // only goes low when keyno == 0
+		K1(KeyNo!=2); // only goes low when keyno == 2
+		K2(KeyNo!=4); // only goes low when keyno == 4
+		K3(KeyNo!=6); // only goes low when keyno == 6
+		K4(KeyNo!=8); // only goes low when keyno == 8
+		K5(KeyNo!=10); // only goes low when keyno == 10
+		K6(KeyNo!=12); // only goes low when keyno == 12
+		K7(KeyNo!=14); // only goes low when keyno == 14
+
+		ProcessKeyStrobe(KEYSTROBE0); // processing even keys on keypad - dont worry function is very small and fast (as we're in an interrupt!)
+		KeyNo++;
+		ProcessKeyStrobe(KEYSTROBE1); // processing odd keys on keypad
+		if(++KeyNo>16) KeyNo=0;
+
+		// tick activity counters at
+		UserActivityTimeout++;
+		WifiActivityTimeout++;
+		BarcodeActivityTimeout++;
+
+		if(UserActivityTimeout>prg.DimTimeoutMs) Brightness=0; // no activity then power off backlight
+		if(UserActivityTimeout>prg.OffTimeoutMs) PWR_HOLD(0); // no activity for a long time then power off terminal fully to save battery
+
+		if(U2STAbits.OERR || U2STAbits.FERR || U2STAbits.PERR) // damn errors
 		{
-			BuzzerTimeout=20; // key click (if thats possible!)
-			KeyBuf[KeyBufInPtr]=ScanCode[KeyNo-20];
-			if(KeyBufInPtr<KEYBUFLEN) KeyBufInPtr++; else BuzzerTimeout=200; // keep adding keypresses to the key buffer if we overflow discard key n beep looong error
-			KeyState[KeyNo-20]=0;  // reset key counter
-			UserActivityTimeout=0; // reset this if pressed a key
-  		Brightness=prg.DefBrightness; // light up if pressed a key!
+			U2STAbits.OERR = 0;
+			U2STAbits.FERR = 0;
+			U2STAbits.PERR = 0;
+			BuzzerTimeout=2000; // long annoying beep (maybe the user will mention it then!)
 		}
-  }
-	KeyNo++;
+//		if(WifiActivityTimeout>prg.WIFIPwrTimeout) PWR_WIFI(0); // no wifi activity so power it down V3 on
+//		if(BarcodeActivityTimeout>prg.BarcodePwrTimeout) PWR_BARCODE(0); // no barcode activity so power it down V3 on
 
-  UserActivityTimeout++;
-  WifiActivityTimeout++;
-  BarcodeActivityTimeout++;
-
-  // To Do any other shit!
-  if(UserActivityTimeout>prg.DimTimeoutMs) Brightness=0; // no activity then power off backlight
-  if(UserActivityTimeout>prg.OffTimeoutMs) PWR_HOLD(0); // no activity for a long time then power off terminal fully to save battery
-//	if(WIFIActivityTimeout>prg.WIFIPwrTimeout) PWR_WIFI(0); // no wifi activity so power it down
-//	if(BarcodeActivityTimeout>prg.BarcodePwrTimeout) PWR_BARCODE(0); // no barcode activity so power it down
+	}
 
   IFS0bits.T1IF = 0; // mark interrupt processed and allow next interrupt
 } // end timer interrupt handler

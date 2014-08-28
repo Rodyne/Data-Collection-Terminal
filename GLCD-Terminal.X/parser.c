@@ -36,58 +36,56 @@
 #define BYTE_GETKEY		0x10
 
 void run()
-{
-	//
-	while(1)
+{	
+	if(!loaded) load(); // load byte code program from host if not loaded already
+
+	ResetProgramVars(); // reset program variables to known condition
+
+	while(1) // do until reset or crash or power off
 	{
-		if(!loaded) load();
-		ResetProgramVars();
-		while(1)
+		// Process the easy byte commands first
+
+		if(app[prg.PC]==BYTE_RESET) break; // reset user app by exiting this loop and going to outer loop which resets
+
+		if(app[prg.PC]==BYTE_GOTO) // Set the program counter to the 2 bytes following the BYTE_GOTO statement
 		{
-			// Get rid of the easy (low hanging fruit) byte commands first
+			// it is the byte code compilers job to ensure this address is legal!
+			prg.PC=(app[prg.PC]<<8)+app[prg.PC+1];
+			continue;
+		}
 
-			if(app[prg.PC]==BYTE_RESET) break; // reset user app by exiting this loop and going to outer loop which resets
+		if(app[prg.PC]==BYTE_BEEP) // beep the beeper
+		{
+			beep(app[prg.PC+1]*25);
+			prg.PC+=2;
+			continue;
+		}
 
-			if(app[prg.PC]==BYTE_GOTO) // Set the program counter to the 2 bytes following the BYTE_GOTO statement
-			{
+		if(app[prg.PC]==BYTE_CLS) // Clear screen
+		{
+			CLS();
+			prg.PC+=1;
+			continue;
+		}
 
-				prg.PC=(app[prg.PC]<<8)+app[prg.PC+1];
-				continue;
-			}
+		if(app[prg.PC]==BYTE_BEEP) // Delay
+		{
+			DelayMs(app[prg.PC+1]*100);
+			prg.PC+=2;
+			continue;
+		}
 
-			if(app[prg.PC]==BYTE_BEEP) // beep the beeper
-			{
-				beep(app[prg.PC+1]*25);
-				prg.PC+=2;
-				continue;
-			}
+		if(app[prg.PC]==BYTE_INPUT) // Set the program counter to the 2 bytes following the BYTE_GOTO statement
+		{
 
-			if(app[prg.PC]==BYTE_CLS) // Clear screen
-			{
-				CLS();
-				prg.PC+=1;
-				continue;
-			}
+			prg.PC=(app[prg.PC]<<8)+app[prg.PC+1];
+			continue;
+		}
 
-			if(app[prg.PC]==BYTE_BEEP) // Delay
-			{
-				DelayMs(app[prg.PC+1]*100);
-				prg.PC+=2;
-				continue;
-			}
+		// if we get to here it means we have encountered an unsupported byte code or something has gone wrong so crash/fail
+		AppCrash("00 Bad Instr");
 
-			if(app[prg.PC]==BYTE_INPUT) // Set the program counter to the 2 bytes following the BYTE_GOTO statement
-			{
-
-				prg.PC=(app[prg.PC]<<8)+app[prg.PC+1];
-				continue;
-			}
-
-			// if we get to here it means we have encountered an unsupported byte code or something has gone wrong so crash/fail
-			CrashAndBurn("100 Bad Instr");
-
-		}	// End of paser loop
-	} // end of reset loop
+	}	// End of paser loop
 }
 
 #endif
