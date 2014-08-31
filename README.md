@@ -10,3 +10,7 @@ firstly a small C Program for a PIC32MX170 using the free Microchip MPLABX compi
 Secondly a server program (possibly in PHP at this moment in time) which will parse low level requests from the terminal into higher level requests such as SQL queries and Print requests to a database.
 
 The hardware for the terminal is still under development and will be published when the first milestone has been reached hopefully before October 2014.
+
+Hardware Schematics here => http://easyeda.com/project_view_Data-Entry-Terminal_neKEWQ8qI.htm
+
+History of project here => http://rodyne.com/?page_id=13
