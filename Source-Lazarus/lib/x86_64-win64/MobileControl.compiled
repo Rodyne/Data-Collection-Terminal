@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Compiler Value="C:\lazarus\fpc\2.6.2\bin\x86_64-win64\fpc.exe" Date="1125672322"/>
+  <Params Value=" -MObjFPC -Scghi -O1 -g -gl -WG -vewnhi &quot;-FiF:\Projects\Mobile Terminal\Source-Lazarus\lib\x86_64-win64&quot; &quot;-FlF:\Projects\Mobile Terminal\Source-Lazarus\synapse\lib&quot; -FuC:\lazarus\components\sqldb\lib\x86_64-win64\win32 -FuC:\lazarus\components\synedit\units\x86_64-win64\win32 -FuC:\lazarus\ideintf\units\x86_64-win64\win32 -FuC:\lazarus\lcl\units\x86_64-win64\win32 -FuC:\lazarus\lcl\units\x86_64-win64 -FuC:\lazarus\components\lazutils\lib\x86_64-win64 -FuC:\lazarus\packager\units\x86_64-win64 &quot;-FuF:\Projects\Mobile Terminal\Source-Lazarus\&quot; &quot;-FUF:\Projects\Mobile Terminal\Source-Lazarus\lib\x86_64-win64\&quot; -l -dLCL -dLCLwin32 MobileControl.lpr"/>
+</CONFIG>

@@ -1,0 +1,303 @@
+object ConfigurationForm: TConfigurationForm
+  Left = 428
+  Height = 200
+  Top = 264
+  Width = 406
+  BorderStyle = bsSingle
+  BorderWidth = 4
+  Caption = 'Mobile Control Configuration'
+  ClientHeight = 200
+  ClientWidth = 406
+  OnShow = FormShow
+  Position = poOwnerFormCenter
+  LCLVersion = '1.2.6.0'
+  object Panel1: TPanel
+    Left = 4
+    Height = 30
+    Top = 4
+    Width = 398
+    Align = alTop
+    BorderWidth = 2
+    ClientHeight = 30
+    ClientWidth = 398
+    TabOrder = 0
+    object SaveButton: TBitBtn
+      Left = 243
+      Height = 24
+      Top = 3
+      Width = 70
+      Align = alRight
+      AutoSize = True
+      Caption = 'Save'
+      Glyph.Data = {
+        76010000424D7801000000000000760000002800000020000000100000000100
+        04000000000000000000120B0000120B00000000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333FFFFFFFFFFFFF33000077777770033377777777777773F000007888888
+        00037F3337F3FF37F37F00000780088800037F3337F77F37F37F000007800888
+        00037F3337F77FF7F37F00000788888800037F3337777777337F000000000000
+        00037F3FFFFFFFFFFF7F00000000000000037F77777777777F7F000FFFFFFFFF
+        00037F7F333333337F7F000FFFFFFFFF00037F7F333333337F7F000FFFFFFFFF
+        00037F7F333333337F7F000FFFFFFFFF00037F7F333333337F7F000FFFFFFFFF
+        00037F7F333333337F7F000FFFFFFFFF07037F7F33333333777F000FFFFFFFFF
+        0003737FFFFFFFFF7F7330099999999900333777777777777733
+      }
+      NumGlyphs = 2
+      OnClick = SaveButtonClick
+      TabOrder = 0
+    end
+    object CancelButton: TBitBtn
+      Left = 313
+      Height = 24
+      Top = 3
+      Width = 82
+      Align = alRight
+      AutoSize = True
+      Cancel = True
+      Caption = 'Cancel'
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        1800000000000003000000000000000000000000000000000000EB5906DC632B
+        D77D67C6775BDD825DE18465DA7E69CA7D5FCC845DD48068DC7778D87973CF7C
+        74C56C6AC44E38DB440FBB722DCAA2998D91BE7787B17F849A8B91AB7D86B17A
+        91BC7892B27A8AB07F80B68881B87A78AD9583B8D395A3CC5B3AB8815B9E8FBE
+        3042C02B4AC94256B33B4CA9314CC41C4ACD1846BD284EBE2746BE1540B41242
+        B72542AA8D81B1C87965C18F648F88C23145DF2D4DE74156C84E64D53B5DED1E
+        4FF6275AF12755DA234FD71855E10341D30D37BA8279BACC786EC490549696C8
+        3350E53359E997ABF395A7E75370E32A55F12E5DF23862D681A7EF6191FB154B
+        E11D41C6857ABAD87A71C08A528993C7315FE93D6CDFA8BAE9EAF0FFABB9E14D
+        64DA4162DF91ADEAE0EDFF88A2EE224BD52A4AC1847FB2D9766CB985579699D3
+        3B5FE9446FE95671D3ADC3F2DCF1FEA6A8DE9CAAE2C7E3FE8EABE12D5BCD114C
+        D81A4EC57B84B4CD746CB98463A498D35761ED5C6FFB516AEF5874CBA6BAD5FE
+        F4FFF2EEFF95AAD7375FC31F55E10F52EC0947C97989BEBE6D65B58163A99ACF
+        6B68EE6366F2606FEF5F77CF9EB3D7FBF8FFF3F1FF95A4D8415DC22249DC1448
+        ED1A4BD5828AC4B9645CAC8653AAACD4627DE56681D67583D8A4BFE5CCF9FE8D
+        B2D688B4D6C9EFFDA0B3DE4D5AD5354EE3344DC78986B4C76C59AC7C54A5AED8
+        577CDF728EDDB2B6E3E5ECFF9DBBE3416ECD2F65C899BAEEE8E9FF999FE63D55
+        D43651B78C8FB0C26F53C07B61ABA8D47297F37895E5B0AEECB8B1E47B84E14B
+        66E73E65EB4F64D0B3ADE78E9DF22E55D13761C77E89AEC17461C48063B0AED7
+        7A9EEE7EA6E7838AE68281E17A81E06269EA6077F4576FE05F67DD4C65E93361
+        EE1748C17986BCA95F5DBE756DC4B5E68AA2F7809AF0868CF57678F17079ED73
+        79ED6174E7586EEC6067F05A61E0465BD8405AC88D86B9AE5452C25B22D89E99
+        C2B4D5B5B1D0AD99D3AA9BDCABA5DCA4A5CE9FA3CC9F9FD69F91D6B0A0D39E94
+        C69B96C3BF9499BC4423E96800BB601BBE845ABB814EC67C67B27968A2836395
+        836095845AA68260B67662B67A5EA579649B7666924C21D04203
+      }
+      OnClick = CancelButtonClick
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 4
+    Height = 162
+    Top = 34
+    Width = 398
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 4
+    ClientHeight = 162
+    ClientWidth = 398
+    TabOrder = 1
+    object Panel3: TPanel
+      Left = 4
+      Height = 30
+      Top = 4
+      Width = 390
+      Align = alTop
+      BevelOuter = bvNone
+      BorderWidth = 2
+      ClientHeight = 30
+      ClientWidth = 390
+      TabOrder = 0
+      object Label1: TLabel
+        Left = 2
+        Height = 26
+        Top = 2
+        Width = 108
+        Align = alLeft
+        AutoSize = False
+        Caption = 'MySQL Server'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object MySQLServer: TEdit
+        Left = 110
+        Height = 26
+        Top = 2
+        Width = 270
+        Align = alLeft
+        TabOrder = 0
+        Text = 'MySQLServer'
+      end
+    end
+    object Panel4: TPanel
+      Left = 4
+      Height = 30
+      Top = 124
+      Width = 390
+      Align = alTop
+      BevelOuter = bvNone
+      BorderWidth = 2
+      ClientHeight = 30
+      ClientWidth = 390
+      TabOrder = 1
+      object sdsdsd: TLabel
+        Left = 2
+        Height = 26
+        Top = 2
+        Width = 108
+        Align = alLeft
+        AutoSize = False
+        Caption = 'MySQL Database'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object MySQLDatabase: TEdit
+        Left = 110
+        Height = 26
+        Top = 2
+        Width = 128
+        Align = alLeft
+        TabOrder = 0
+        Text = 'MySQLDatabase'
+      end
+    end
+    object Panel5: TPanel
+      Left = 4
+      Height = 30
+      Top = 94
+      Width = 390
+      Align = alTop
+      BevelOuter = bvNone
+      BorderWidth = 2
+      ClientHeight = 30
+      ClientWidth = 390
+      TabOrder = 2
+      object xxx: TLabel
+        Left = 2
+        Height = 26
+        Top = 2
+        Width = 108
+        Align = alLeft
+        AutoSize = False
+        Caption = 'Password'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object MySQLPassword: TEdit
+        Left = 110
+        Height = 26
+        Top = 2
+        Width = 128
+        Align = alLeft
+        EchoMode = emPassword
+        PasswordChar = '#'
+        TabOrder = 0
+        Text = 'Edit1'
+      end
+      object ShowPassword: TCheckBox
+        Left = 254
+        Height = 26
+        Top = 2
+        Width = 102
+        Align = alLeft
+        Caption = 'Show Password'
+        OnChange = ShowPasswordChange
+        TabOrder = 1
+      end
+      object MySQLPassword1: TLabel
+        Left = 238
+        Height = 26
+        Top = 2
+        Width = 16
+        Align = alLeft
+        AutoSize = False
+        Layout = tlCenter
+        ParentColor = False
+      end
+    end
+    object Panel6: TPanel
+      Left = 4
+      Height = 30
+      Top = 64
+      Width = 390
+      Align = alTop
+      BevelOuter = bvNone
+      BorderWidth = 2
+      ClientHeight = 30
+      ClientWidth = 390
+      TabOrder = 3
+      object Label4: TLabel
+        Left = 2
+        Height = 26
+        Top = 2
+        Width = 108
+        Align = alLeft
+        AutoSize = False
+        Caption = 'MySQL UserName'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object MySQLUsername: TEdit
+        Left = 110
+        Height = 26
+        Top = 2
+        Width = 128
+        Align = alLeft
+        TabOrder = 0
+        Text = 'MySQLUsername'
+      end
+    end
+    object Panel7: TPanel
+      Left = 4
+      Height = 30
+      Top = 34
+      Width = 390
+      Align = alTop
+      BevelOuter = bvNone
+      BorderWidth = 2
+      ClientHeight = 30
+      ClientWidth = 390
+      TabOrder = 4
+      object Label5: TLabel
+        Left = 2
+        Height = 26
+        Top = 2
+        Width = 108
+        Align = alLeft
+        AutoSize = False
+        Caption = 'MySQL TCP/IP Port'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object MySQLPort: TEdit
+        Left = 110
+        Height = 26
+        Top = 2
+        Width = 48
+        Align = alLeft
+        MaxLength = 5
+        TabOrder = 0
+        Text = '3306'
+      end
+    end
+  end
+  object db: TMySQL55Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    Transaction = Transaction
+    OnLog = dbLog
+    LogEvents = []
+    left = 280
+    top = 80
+  end
+  object Transaction: TSQLTransaction
+    Active = False
+    Action = caNone
+    Database = db
+    left = 328
+    top = 80
+  end
+end

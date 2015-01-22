@@ -1,0 +1,70 @@
+object SelectListForm: TSelectListForm
+  Left = 450
+  Height = 480
+  Top = 198
+  Width = 518
+  BorderWidth = 4
+  Caption = 'Select User'
+  ClientHeight = 480
+  ClientWidth = 518
+  Position = poOwnerFormCenter
+  LCLVersion = '1.2.6.0'
+  object Panel1: TPanel
+    Left = 4
+    Height = 442
+    Top = 4
+    Width = 510
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 4
+    ClientHeight = 442
+    ClientWidth = 510
+    TabOrder = 0
+    object List: TListBox
+      Left = 4
+      Height = 434
+      Top = 4
+      Width = 502
+      Align = alClient
+      ItemHeight = 0
+      OnSelectionChange = ListSelectionChange
+      TabOrder = 0
+    end
+  end
+  object Panel2: TPanel
+    Left = 4
+    Height = 30
+    Top = 446
+    Width = 510
+    Align = alBottom
+    BevelOuter = bvNone
+    BorderWidth = 4
+    ClientHeight = 30
+    ClientWidth = 510
+    TabOrder = 1
+    object OKButton: TBitBtn
+      Left = 332
+      Height = 22
+      Top = 4
+      Width = 88
+      Align = alRight
+      Default = True
+      DefaultCaption = True
+      Kind = bkOK
+      OnClick = OKButtonClick
+      TabOrder = 0
+    end
+    object CancelButton: TBitBtn
+      Left = 420
+      Height = 22
+      Top = 4
+      Width = 86
+      Align = alRight
+      Cancel = True
+      DefaultCaption = True
+      Kind = bkCancel
+      OnClick = CancelButtonClick
+      TabOrder = 1
+    end
+  end
+end

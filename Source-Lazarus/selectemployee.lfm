@@ -1,0 +1,343 @@
+object SelectEmployeeForm: TSelectEmployeeForm
+  Left = 419
+  Height = 522
+  Top = 199
+  Width = 1016
+  BorderWidth = 4
+  Caption = 'SelectEmployeeForm'
+  ClientHeight = 522
+  ClientWidth = 1016
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poOwnerFormCenter
+  LCLVersion = '1.2.0.3'
+  object Panel1: TPanel
+    Left = 4
+    Height = 30
+    Top = 4
+    Width = 1008
+    Align = alTop
+    BorderWidth = 3
+    ClientHeight = 30
+    ClientWidth = 1008
+    TabOrder = 0
+    object Panel3: TPanel
+      Left = 4
+      Height = 22
+      Top = 4
+      Width = 136
+      Align = alLeft
+      Caption = 'Maintain Employees'
+      TabOrder = 0
+    end
+    object Label2: TLabel
+      Left = 140
+      Height = 22
+      Top = 4
+      Width = 156
+      Align = alLeft
+      Caption = '     Company / System Roles   '
+      Layout = tlCenter
+      ParentColor = False
+    end
+    object EmployeeRole: TComboBox
+      Left = 296
+      Height = 23
+      Top = 4
+      Width = 204
+      Align = alLeft
+      DropDownCount = 32
+      ItemHeight = 15
+      ItemIndex = 0
+      Items.Strings = (
+        '[Any Role]'
+        'System Administrators'
+        'Purchasing / General Office'
+        'Sales'
+        'Accountants'
+        'Production Managers'
+        'Production Supervisors'
+        'Storeman'
+        'Production Operators'
+      )
+      OnChange = RefreshButtonClick
+      Style = csDropDownList
+      TabOrder = 1
+      Text = '[Any Role]'
+    end
+    object FilterActive: TCheckBox
+      Left = 642
+      Height = 22
+      Top = 4
+      Width = 141
+      Align = alLeft
+      Caption = 'Active Employees Only'
+      Checked = True
+      OnClick = RefreshButtonClick
+      State = cbChecked
+      TabOrder = 2
+    end
+    object Label3: TLabel
+      Left = 630
+      Height = 22
+      Top = 4
+      Width = 12
+      Align = alLeft
+      Caption = '    '
+      Layout = tlCenter
+      ParentColor = False
+    end
+    object SelectPanel: TPanel
+      Left = 826
+      Height = 22
+      Top = 4
+      Width = 178
+      Align = alRight
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 22
+      ClientWidth = 178
+      TabOrder = 3
+      object CancelButton: TBitBtn
+        Left = 89
+        Height = 22
+        Top = 0
+        Width = 89
+        Align = alRight
+        Caption = 'Cancel'
+        Kind = bkCancel
+        OnClick = CancelButtonClick
+        TabOrder = 0
+      end
+      object OKButton: TBitBtn
+        Left = 0
+        Height = 22
+        Top = 0
+        Width = 89
+        Align = alRight
+        DefaultCaption = True
+        Kind = bkOK
+        OnClick = OKButtonClick
+        TabOrder = 1
+      end
+    end
+    object RefreshButton: TBitBtn
+      Left = 795
+      Height = 22
+      Top = 4
+      Width = 27
+      Align = alLeft
+      Glyph.Data = {
+        F6000000424DF600000000000000760000002800000010000000100000000100
+        0400000000008000000000000000000000000000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FFFF78FFFFFF
+        FFFFFFF868F8FFFFFFFFFF87666678FFFFFFFF7777776678FFFFF87777888877
+        8FFFF888878FFF887FFFFFF8887FFFFF8FFFFFFFF88FFFFFFFFFFFFFFFFF88FF
+        FFFFF88FFFFF7678FFFFF8778FFF76667FFFFF88667777766FFFFFFF88777777
+        8FFFFFFFF8888878FFFFFFFFFFFFF88FFFFFFFFFFFFFF88FFFFF
+      }
+      OnClick = RefreshButtonClick
+      TabOrder = 4
+    end
+    object Label4: TLabel
+      Left = 783
+      Height = 22
+      Top = 4
+      Width = 12
+      Align = alLeft
+      Caption = '    '
+      Layout = tlCenter
+      ParentColor = False
+    end
+    object Label5: TLabel
+      Left = 500
+      Height = 22
+      Top = 4
+      Width = 50
+      Align = alLeft
+      Caption = '     Filter   '
+      Layout = tlCenter
+      ParentColor = False
+    end
+    object Filter: TEdit
+      Left = 550
+      Height = 22
+      Top = 4
+      Width = 80
+      Align = alLeft
+      CharCase = ecUppercase
+      MaxLength = 9
+      OnChange = RefreshButtonClick
+      TabOrder = 5
+    end
+    object MaintPanel: TPanel
+      Left = 737
+      Height = 22
+      Top = 4
+      Width = 89
+      Align = alRight
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 22
+      ClientWidth = 89
+      TabOrder = 6
+      object NewButton: TBitBtn
+        Left = 0
+        Height = 22
+        Top = 0
+        Width = 89
+        Align = alRight
+        Caption = 'Add New..'
+        Glyph.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000064000000640000000000000000000000FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00B7B7
+          B7FFAEAEAEFF3071A9FF2C6EA6FF286BA3FF2468A0FF21669EFF1D639BFF1A61
+          99FF175F97FF145C94FF115B93FF6C6C6CFF6C6C6CFFFFFFFF00FFFFFF00FFFF
+          FF00FFFFFF003675ADFF86B6D8FF83B3D7FF81B2D6FF7DAFD5FF7BADD4FF79AB
+          D3FF76AAD2FF74A8D1FF155D95FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF003C79B1FF8BB9DAFF66A2CEFF62A0CDFF5F9DCBFF5B9AC9FF5897
+          C8FF5495C7FF77ABD3FF196098FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00427DB5FF8FBDDCFF6CA7D0FF67A4CFFF64A1CDFF609ECCFF5C9B
+          CAFF5999C9FF7BADD4FF1E649CFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF004882BAFF93C0DDFF71ABD2FF6DA8D1FF69A5CFFF66A2CEFF629F
+          CCFF5E9CCBFF7FB0D5FF23679FFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF004E86BEFF98C3DFFF77AFD5FF73ACD3FF6FA9D2FF6BA7D0FF5BB7
+          E3FF54C2EDFF81B4D7FF286BA3FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00538AC2FF9CC6E1FF7CB3D7FF79B1D5FF75ADD4FF71ABD2FF5FBA
+          E4FF4BD4FFFF7CBBE0FF2E6FA7FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00598EC6FFA0C9E3FF82B8D9FF7EB5D8FF7AB2D6FF77AFD5FF73AC
+          D3FF6DABD4FF8CBADAFF3373ABFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF005E91C9FFA4CCE4FF87BBDBFF84B9DAFF80B6D8FF7CB3D7FF79B0
+          D5FF74ADD4FF8FBDDCFF3977AFFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006395CDFFA8CFE5FF8CBFDDFF88BDDCFF85BADBFF81B7D9FF7EB4
+          D7FF7AB2D6FF94C1DDFF3F7CB4FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006798D0FFABD1E7FF90C2DFFF8DC0DEFF8ABEDCFF87BBDBFF83B8
+          DAFF80B6D8FF99C4E0FF4580B8FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006B9BD3FFAED4E8FFABD3E8FFAAD1E7FFA8CFE5FFA5CDE4FFA2CB
+          E4FFA0C9E2FF9DC7E1FF4B84BCFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF006E9DD5FF6C9BD3FF699AD2FF6697CFFF6395CDFF6093CBFF5C90
+          C8FF598EC6FF558BC3FF5188C0FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+          FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
+        }
+        OnClick = POP_NewClick
+        TabOrder = 0
+      end
+    end
+  end
+  object Panel2: TPanel
+    Left = 4
+    Height = 4
+    Top = 34
+    Width = 1008
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 1
+  end
+  object DBGrid1: TDBGrid
+    Left = 4
+    Height = 480
+    Top = 38
+    Width = 1008
+    Align = alClient
+    AlternateColor = clMoneyGreen
+    Color = clWindow
+    Columns = <>
+    DataSource = ds
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgAutoSizeColumns]
+    PopupMenu = POP
+    TabOrder = 2
+    OnDblClick = DBGrid1DblClick
+  end
+  object q1: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'ID'
+        DataType = ftString
+        Precision = -1
+        Size = 9
+      end    
+      item
+        Name = 'Name'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'LoginID'
+        DataType = ftString
+        Precision = -1
+        Size = 16
+      end    
+      item
+        Name = 'Status'
+        DataType = ftString
+        Precision = -1
+        Size = 10
+      end    
+      item
+        Name = 'Company/System Roles'
+        DataType = ftString
+        Precision = -1
+        Size = 99
+      end    
+      item
+        Name = 'Other Information'
+        DataType = ftString
+        Precision = -1
+        Size = 250
+      end>
+    Database = CommonForm.MySQL
+    Transaction = CommonForm.Transaction1
+    SQL.Strings = (
+      'SELECT'
+      ' LEFT(AssetID,9) AS "ID",'
+      ' AssetName AS "Name",'
+      ' AssetCode AS "LoginID",'
+      ' CASE AssetStatus'
+      '  WHEN 0 THEN "Innactive"'
+      '  WHEN 1 THEN "Not Known!"'
+      '  WHEN 2 THEN "Active"'
+      ' END AS "Status",'
+      ' LEFT(CONCAT('
+      '  IF(AssetFlags&0x01,"System Administrator,",""),'
+      '  IF(AssetFlags&0x02,"Purchasing/General Office,",""),'
+      '  IF(AssetFlags&0x04,"Sales,",""),'
+      '  IF(AssetFlags&0x08,"Accounts,",""),'
+      '  IF(AssetFlags&0x10,"Production Manager,",""),'
+      '  IF(AssetFlags&0x20,"Production Supervisor,",""),'
+      '  IF(AssetFlags&0x40,"Storeman,","")'
+      ' ),99) AS "Company/System Roles",'
+      ' InfoStr AS "Other Information"'
+      'FROM assets'
+      'WHERE AssetType="E" /*AND*/'
+      ''
+    )
+    Params = <>
+    left = 212
+    top = 156
+  end
+  object ds: TDatasource
+    DataSet = q1
+    left = 274
+    top = 157
+  end
+  object POP: TPopupMenu
+    OnPopup = POPPopup
+    left = 369
+    top = 156
+    object POP_New: TMenuItem
+      Caption = 'New Record..'
+      OnClick = POP_NewClick
+    end
+    object POP_Edit: TMenuItem
+      Caption = 'Edit Record..'
+      OnClick = POP_EditClick
+    end
+  end
+end
