@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="7">
+      <Unit0>
+        <Filename Value="MobileControl.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="89" Y="8"/>
+        <UsageCount Value="202"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="mainunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="MainUnit"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="124"/>
+        <CursorPos X="11" Y="143"/>
+        <FoldState Value=" TM202 T4A03H"/>
+        <UsageCount Value="202"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="configuration.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ConfigurationForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="135"/>
+        <CursorPos X="3" Y="167"/>
+        <UsageCount Value="205"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="selectlist.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SelectListForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="26"/>
+        <CursorPos Y="31"/>
+        <UsageCount Value="233"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="editfunction.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditFunctionForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="EditFunction"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="91"/>
+        <CursorPos X="50" Y="142"/>
+        <UsageCount Value="144"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="blcksock.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1798"/>
+        <CursorPos X="17" Y="1817"/>
+        <UsageCount Value="13"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\objpas\classes\classesh.inc"/>
+        <TopLine Value="1534"/>
+        <CursorPos X="3" Y="1549"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="112" TopLine="109"/>
+      </Position1>
+      <Position2>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="111" TopLine="108"/>
+      </Position2>
+      <Position3>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="110" TopLine="107"/>
+      </Position3>
+      <Position4>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="109" TopLine="106"/>
+      </Position4>
+      <Position5>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="108" TopLine="105"/>
+      </Position5>
+      <Position6>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="83" Column="17" TopLine="75"/>
+      </Position6>
+      <Position7>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="150" Column="21" TopLine="127"/>
+      </Position7>
+      <Position8>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="144" TopLine="127"/>
+      </Position8>
+      <Position9>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="180" Column="36" TopLine="159"/>
+      </Position9>
+      <Position10>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="299" Column="3" TopLine="277"/>
+      </Position10>
+      <Position11>
+        <Filename Value="configuration.pas"/>
+        <Caret Line="205" TopLine="170"/>
+      </Position11>
+      <Position12>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="66" TopLine="50"/>
+      </Position12>
+      <Position13>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="291" Column="5" TopLine="274"/>
+      </Position13>
+      <Position14>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="296" Column="266" TopLine="275"/>
+      </Position14>
+      <Position15>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="291" TopLine="275"/>
+      </Position15>
+      <Position16>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="298" Column="21" TopLine="242"/>
+      </Position16>
+      <Position17>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="282" Column="7" TopLine="256"/>
+      </Position17>
+      <Position18>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="181" TopLine="147"/>
+      </Position18>
+      <Position19>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="182" TopLine="148"/>
+      </Position19>
+      <Position20>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="146" Column="18" TopLine="127"/>
+      </Position20>
+      <Position21>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="16" Column="14"/>
+      </Position21>
+      <Position22>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="22" Column="23"/>
+      </Position22>
+      <Position23>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="31" Column="23"/>
+      </Position23>
+      <Position24>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="56" Column="17" TopLine="25"/>
+      </Position24>
+      <Position25>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="245" Column="22" TopLine="214"/>
+      </Position25>
+      <Position26>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="56" Column="17" TopLine="37"/>
+      </Position26>
+      <Position27>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="182" TopLine="163"/>
+      </Position27>
+      <Position28>
+        <Filename Value="editfunction.pas"/>
+        <Caret Line="101" Column="48" TopLine="92"/>
+      </Position28>
+      <Position29>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="175" TopLine="175"/>
+      </Position29>
+      <Position30>
+        <Filename Value="mainunit.pas"/>
+        <Caret Line="144" Column="27" TopLine="128"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectSession>
+  <Debugging>
+    <BreakPoints Count="2">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="editfunction.pas"/>
+        <Line Value="156"/>
+      </Item1>
+      <Item2>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="configuration.pas"/>
+        <Line Value="309"/>
+      </Item2>
+    </BreakPoints>
+  </Debugging>
+</CONFIG>
